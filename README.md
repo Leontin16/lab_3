@@ -142,6 +142,8 @@ int main() { return 0; }
 **В Windows (PowerShell):**
 ```powershell
 # Из корня проекта
+mkdir build
+cd build
 cmake --build .
 ```
 
