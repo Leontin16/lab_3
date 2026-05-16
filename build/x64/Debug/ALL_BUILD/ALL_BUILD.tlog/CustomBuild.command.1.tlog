@@ -1,0 +1,10 @@
+^D:\LAB333\LAB_3\CMAKELISTS.TXT
+setlocal
+F:\cmakkke\bin\cmake.exe -SD:/lab333/lab_3 -BD:/lab333/lab_3/build --check-stamp-file D:/lab333/lab_3/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

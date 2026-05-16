@@ -1,0 +1,6 @@
+# CMake generation dependency list for this directory.
+D:/lab333/lab_3/core/p1_first_test/CMakeLists.txt
+F:/cmakkke/share/cmake-4.2/Modules/FindMPI.cmake
+F:/cmakkke/share/cmake-4.2/Modules/FindPackageHandleStandardArgs.cmake
+F:/cmakkke/share/cmake-4.2/Modules/FindPackageMessage.cmake
+F:/cmakkke/share/cmake-4.2/Modules/FindPkgConfig.cmake
