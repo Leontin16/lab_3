@@ -7,11 +7,12 @@
 #include "../shared/tridiag.h"
 #include "../shared/grid.h"
 
-// Коэффициенты 5 варианта
-const double XI_JUMP = M_PI / 4.0;
+// Параметры 5 варианта — единственное место определения
+static const double XI_JUMP = M_PI / 4.0;
+static const double MU1     = 1.0;   // Левое ГУ (поток, Нейман)
+static const double MU2     = 0.0;   // Правое ГУ (значение, Дирихле)
 
-// ИСПРАВЛЕНО: Заменили умножение на сложение, чтобы k(0) > 0!
-double k1(double x) { return std::sqrt(2.0) + std::sin(x); } 
+double k1(double x) { return std::sqrt(2.0) + std::sin(x); }
 double k2(double x) { return std::pow(std::cos(x), 2); }
 
 double q1(double x) { return 1.0; }
@@ -24,26 +25,22 @@ BVP_Result solve_mixed_main_imp(int n) {
     grid::UniformGrid g(n);
     double h = g.h;
 
-    // ГУ для 5 варианта:
-    double mu1 = 1.0; // Левое ГУ (поток)
-    double mu2 = 0.0; // Правое ГУ (значение)
-
-    int num_nodes = n + 1; 
+    int num_nodes = n + 1;
 
     std::vector<double> a(num_nodes, 0.0);
     std::vector<double> b(num_nodes, 0.0);
     std::vector<double> c(num_nodes, 0.0);
     std::vector<double> d(num_nodes, 0.0);
 
-    // 1. Левое граничное условие (Узел i = 0): Смешанное (Улучшенная аппроксимация O(h^2))
-    double k_half = grid::k_half(k1, 0.0, g.half(0));
-    double q_bar_0 = grid::q_bar(q1, 0.0, g.half(0));
-    double f_bar_0 = grid::f_bar(f1, 0.0, g.half(0));
+    // 1. Левое ГУ (i = 0): Нейман, улучшенная аппроксимация O(h^2)
+    double k_half   = grid::k_half(k1, 0.0, g.half(0));
+    double q_bar_0  = grid::q_bar(q1, 0.0, g.half(0));
+    double f_bar_0  = grid::f_bar(f1, 0.0, g.half(0));
 
     a[0] = 0.0;
-    b[0] = (k_half / h) + q_bar_0 * (h / 2.0); 
+    b[0] = (k_half / h) + q_bar_0 * (h / 2.0);
     c[0] = -(k_half / h);
-    d[0] = f_bar_0 * (h / 2.0) + mu1;
+    d[0] = f_bar_0 * (h / 2.0) + MU1;
 
     int m = grid::jump_node(g, XI_JUMP);
 
@@ -84,11 +81,13 @@ BVP_Result solve_mixed_main_imp(int n) {
         d[i] = f_cell * h;
     }
 
-    // 3. Правое граничное условие (Узел i = n): Первая краевая задача (Дирихле)
-    a[n] = 0.0; 
-    b[n] = 1.0; 
-    c[n] = 0.0; 
-    d[n] = mu2; 
+    // 3. Правое ГУ (i = n): Дирихле
+    a[n] = 0.0;
+    b[n] = 1.0;
+    c[n] = 0.0;
+    d[n] = MU2;
 
-    return BVP_Result(g, tridiag::solve(a, b, c, d));
+    return BVP_Result(g, tridiag::solve(a, b, c, d),
+                      XI_JUMP, MU1, MU2,
+                      "neumann", "dirichlet");
 }
