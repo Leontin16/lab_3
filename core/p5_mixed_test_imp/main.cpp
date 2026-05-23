@@ -24,13 +24,13 @@ int main() {
     }
     
     // 1. Находим численное решение v на заданной сетке
-    std::vector<double> v = solve_test_mixed(n);
+    std::vector<double> v = solve_test_mixed_p5(n);
     grid::UniformGrid g(n);
     
     // 2. Считаем точное аналитическое решение u
     std::vector<double> u(n + 1);
     for (int i = 0; i <= n; ++i) {
-        u[i] = get_analytical_test(g.x[i]);
+        u[i] = get_analytical_test_p5(g.x[i]);
     }
     
     // 3. Находим максимальное абсолютное отклонение и его индекс
