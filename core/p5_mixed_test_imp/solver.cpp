@@ -44,7 +44,7 @@ namespace {
     }
 }
 
-double get_analytical_test(double x) {
+double get_analytical_test_p5(double x) {
     static bool initialized = false;
     static double c1, c2, c3, c4, l1, l2;
 
@@ -90,7 +90,7 @@ double get_analytical_test(double x) {
     }
 }
 
-std::vector<double> solve_test_mixed(int n) {
+std::vector<double> solve_test_mixed_p5(int n) {
     grid::UniformGrid g(n);
     double h = g.h;
     std::vector<double> a(n + 1, 0), b(n + 1, 0), c(n + 1, 0), d(n + 1, 0);
